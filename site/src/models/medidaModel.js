@@ -5,12 +5,9 @@ function buscarUltimasMedidas(idAquario, limite_linhas) {
     instrucaoSql = ''
 
     if (process.env.AMBIENTE_PROCESSO == "producao") {
-        instrucaoSql = `select cpuTotem as cpu, memoriaTotem as memoria, discoTotem as disco,
-        dataHora,
-        CONVERT(varchar, dataHora, 108) as momento_grafico
-        from Leitura  
-        where fkAtm = ${idAquario}
-        order by idLeitura desc limit ${limite_linhas}`;
+        instrucaoSql = `select top ${limite_linhas} cpuTotem as cpu, memoriaTotem as memoria, discoTotem as disco, dataHora,
+        CONVERT(varchar, dataHora, 108) as momento_grafico from Leitura where fkAtm = ${idAquario}
+        order by idLeitura desc`;
     
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
         instrucaoSql = `select cpuTotem as cpu, memoriaTotem as memoria, discoTotem as disco, 
@@ -18,7 +15,7 @@ function buscarUltimasMedidas(idAquario, limite_linhas) {
                         DATE_FORMAT(dataHora,'%H:%i:%s') as momento_grafico
                     from leitura
                     where fkAtm = ${idAquario}
-                    order by idLeitura desc limit ${limite_linhas}`;
+                    order by idLeitura desc ${limite_linhas}`;
     } else {
         console.log("\nO AMBIENTE (produção OU desenvolvimento) NÃO FOI DEFINIDO EM app.js\n");
         return
@@ -61,21 +58,17 @@ function buscarMedidasEmTempoReal(idAquario) {
     instrucaoSql = ''
 
     if (process.env.AMBIENTE_PROCESSO == "producao") {
-        instrucaoSql = `select top 1
-        dht11_temperatura as temperatura, 
-        dht11_umidade as umidade,  
-                        CONVERT(varchar, momento, 108) as momento_grafico, 
-                        fkAquario 
-                        from medida where fkAquario = ${idAquario} 
-                    order by id desc`;
+        instrucaoSql = `select cpuTotem as cpu, memoriaTotem as memoria, discoTotem as disco, dataHora,
+        CONVERT(varchar, dataHora, 108) as momento_grafico from Leitura join Atm on fkAtm = idAtm 
+        order by idLeitura desc`;
 
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
         instrucaoSql = `select cpuTotem as cpu, memoriaTotem as memoria, discoTotem as disco, 
         dataHora,
-        DATE_FORMAT(dataHora,'%H:%i:%s') as momento_grafico,
-                        fkAtm 
-                        from leitura where fkAtm = ${idAquario} 
-                    order by idLeitura desc limit 1`;
+        DATE_FORMAT(dataHora,'%H:%i:%s') as momento_grafico
+        from leitura
+        where fkAtm = ${idAquario}
+         order by idLeitura desc ${limite_linhas}`;
     } else {
         console.log("\nO AMBIENTE (produção OU desenvolvimento) NÃO FOI DEFINIDO EM app.js\n");
         return

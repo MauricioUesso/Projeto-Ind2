@@ -476,6 +476,7 @@
 
                 <!-- Line Chart -->
                 <canvas id="canvas_grafico"></canvas>
+
                 <script>
 
                   let proximaAtualizacao;
@@ -499,7 +500,7 @@
                           console.log(`Dados recebidos: ${JSON.stringify(resposta)}`);
                           resposta.reverse();
 
-                          plotarGrafico(resposta, idAquario);
+                          plotarGrafico(resposta);
                         });
                       } else {
                         console.error('Nenhum dado encontrado ou erro na API');
@@ -517,10 +518,12 @@
                       labels: [],
                       datasets: [
                         {
-                          yAxisID: 'cpuTotem',
-                          label: 'cpuTotem',
-                          borderColor: '#32B9CD',
-                          backgroundColor: '#32b9cd8f',
+                          yAxisID: 'yAxisCPU',
+                          xAxisID: 'xAxisCPU',
+                          label: 'Porcentagem de uso da CPU(%)',
+                          borderColor: '#000814',
+                          backgroundColor: '#118ab2',
+                          pointRadius: 6,
                           fill: true,
                           data: []
                         }
@@ -528,15 +531,53 @@
                       ]
                     };
 
+                    var dados2 = {
+                      labels: [],
+                      datasets: [
+                        {
+                          yAxisID: 'yAxisRam',
+                          xAxisID: 'xAxisRam',
+                          label: 'Porcentagem de uso da RAM(%)',
+                          borderColor: '#000814',
+                          backgroundColor: '#06d6a0',
+                          pointRadius: 6,
+                          fill: true,
+                          data: []
+                        }
+                      ]
+                    };
+
+                    var dados3 = {
+                      labels: [],
+                      datasets: [
+                        {
+                          yAxisID: 'yAxisDisc',
+                          xAxisID: 'xAxisDisc',
+                          label: 'Uso do Disco(Gb)',
+                          borderColor: '#000814',
+                          backgroundColor: '#ffd166',
+                          pointRadius: 6,
+                          fill: true,
+                          data: []
+                        }
+                      ]
+                    };
+
                     for (i = 0; i < resposta.length; i++) {
                       var registro = resposta[i];
                       dados.labels.push(registro.momento_grafico);
                       dados.datasets[0].data.push(registro.cpuTotem);
+                      dados2.labels.push(registro.momento_grafico)
+                      dados2.datasets[0].data.push(registro.memoriaTotem)
+                      dados3.labels.push(registro.momento_grafico)
+                      dados3.datasets[0].data.push(registro.discoTotem)
                       // dados.datasets[1].data.push(registro.memoriaTotem);
                     }
 
-                    console.log(JSON.stringify(dados));
 
+
+                    console.log(JSON.stringify(dados));
+                    console.log(JSON.stringify(dados2));
 
                     // var ctx = canvas_grafico.getContext('2d');
                     window.grafico_linha = new Chart(canvas_grafico, {
@@ -563,30 +604,76 @@
                               min: 0
                             }
                           }, 
-                          // {
-                          //   type: 'linear',
-                          //   display: false,
-                          //   position: 'right',
-                          //   id: 'memoriaTotem',
-                          //   ticks: {
-                          //     beginAtZero: true,
-                          //     max: 100,
-                          //     min: 0
-                          //   },
-
-                          //   gridLines: {
-                          //     drawOnChartArea: false,
-                          //   },
-                          // }
+                        
                         ],
                         }
                       }
-                    });
+                    })
 
-                    setTimeout(() => atualizarGrafico(idAquario, dados), 2000);
+                    window.grafico_linha2 = new Chart(canvas_grafico2, {
+                      type: 'line',
+                      data: dados2,
+                      options: {
+                        responsive: true,
+                        animation: { duration: 500 },
+                        hoverMode: 'index',
+                        stacked: false,
+                        title: {
+                          display: false,
+                          text: 'Dados capturados'
+                        },
+                        scales: {
+                          yAxes: [{
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            id: 'memoriaTotem',
+                            ticks: {
+                              beginAtZero: true,
+                              max: 100,
+                              min: 0
+                            }
+                          }, 
+                        
+                        ],
+                        }
+                      }
+                    })
+
+                    window.grafico_linha3 = new Chart(canvas_grafico3, {
+                      type: 'line',
+                      data: dados3,
+                      options: {
+                        responsive: true,
+                        animation: { duration: 500 },
+                        hoverMode: 'index',
+                        stacked: false,
+                        title: {
+                          display: false,
+                          text: 'Dados capturados'
+                        },
+                        scales: {
+                          yAxes: [{
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            id: 'memoriaTotem',
+                            ticks: {
+                              beginAtZero: true,
+                              max: 100,
+                              min: 0
+                            }
+                          }, 
+                        
+                        ],
+                        }
+                      }
+                    })
+
+                    setTimeout(() => atualizarGrafico(idAquario, dados, dados2, dados3), 2000);
                   }
 
-                  function atualizarGrafico(idAquario, dados) {
+                  function atualizarGrafico(idAquario, dados, dados2, dados3) {
 
                     fetch(`/medidas/tempo-real/${idAquario}`, { cache: 'no-store' }).then(function (response) {
                       if (response.ok) {
@@ -594,26 +681,34 @@
 
                           console.log(`Dados recebidos: ${JSON.stringify(novoRegistro)}`);
                           console.log(`Dados atuais do gráfico: ${dados}`);
+                          console.log(`Dados atuais do gráfico: ${dados2}`);
 
-                          // tirando e colocando valores no gráfico
                           dados.labels.shift(); // apagar o primeiro
                           dados.labels.push(novoRegistro[0].momento_grafico); // incluir um novo momento
+                          dados.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                          dados.datasets[0].data.push(novoRegistro[0].cpu); 
+                        
 
-                          dados.datasets[0].data.shift();  // apagar o primeiro de umidade
-                          dados.datasets[0].data.push(novoRegistro[0].cpuTotem); // incluir uma nova medida de umidade
+                          dados2.labels.shift();  // apagar o primeiro de temperatura
+                          dados2.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
+                          dados2.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                          dados2.datasets[0].data.push(novoRegistro[0].memoria); 
 
-                          dados.datasets[1].data.shift();  // apagar o primeiro de temperatura
-                          dados.datasets[1].data.push(novoRegistro[0].memoriaTotem); // incluir uma nova medida de temperatura
+                          dados3.labels.shift();  // apagar o primeiro de temperatura
+                          dados3.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
+                          dados3.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                          dados3.datasets[0].data.push(novoRegistro[0].disco); 
 
                           window.grafico_linha.update();
+                          window.grafico_linha2.update();
+                          window.grafico_linha3.update();
 
                           // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
-                          proximaAtualizacao = setTimeout(() => atualizarGrafico(idAquario, dados), 2000);
+                          proximaAtualizacao = setTimeout(() => atualizarGrafico(idAquario, dados, dados2, dados3), 2000);
                         });
                       } else {
                         console.error('Nenhum dado encontrado ou erro na API');
                         // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
-                        proximaAtualizacao = setTimeout(() => atualizarGrafico(idAquario, dados), 2000);
                       }
                     })
                       .catch(function (error) {
@@ -622,30 +717,7 @@
 
                   }
 
-                  // document.addEventListener("DOMContentLoaded", () => {
-                  //   new Chart(document.querySelector('#lineChart'), {
-                  //     type: 'line',
-                  //     data: {
-                  //       labels: ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
-                  //       datasets: [{
-                  //         label: 'Uso da CPU (%)',
-                  //         data: [60, 55, 85, 40, 98, 85, 20],
-                  //         fill: false,
-                  //         borderColor: 'grey',
-                  //         backgroundColor: ['yellow', 'yellow', 'orange', 'green', 'red', 'orange', 'green'],
-                  //         pointRadius: 8,
-                  //         tension: 0.1
-                  //       }]
-                  //     },
-                  //     options: {
-                  //       scales: {
-                  //         y: {
-                  //           beginAtZero: true
-                  //         }
-                  //       }
-                  //     }
-                  //   });
-                  // });
+                 
                 </script>
 
 
@@ -661,8 +733,8 @@
                 <h5 class="card-title">Memória</h5>
 
                 <!-- Line Chart -->
-                <canvas id="lineChart2" style="max-height: 400px;"></canvas>
-                <script>
+                <canvas id="canvas_grafico2"></canvas>
+                <!-- <script>
                   document.addEventListener("DOMContentLoaded", () => {
                     new Chart(document.querySelector('#lineChart2'), {
                       type: 'line',
@@ -687,7 +759,7 @@
                       }
                     });
                   });
-                </script>
+                </script> -->
 
 
                 <!-- End Line CHart -->
@@ -702,8 +774,8 @@
                 <h5 class="card-title">Disco </h5>
 
                 <!-- Pie Chart -->
-                <canvas id="pieChart" style="max-height: 295px;"></canvas>
-                <script>
+                <canvas id="canvas_grafico3"></canvas>
+                <!-- <script>
                   document.addEventListener("DOMContentLoaded", () => {
                     new Chart(document.querySelector('#pieChart'), {
                       type: 'pie',
@@ -725,7 +797,7 @@
                       }
                     });
                   });
-                </script>
+                </script> -->
                 <!-- End Pie CHart -->
 
               </div>
@@ -776,80 +848,7 @@
         </div>
 
       </div>
-      <!-- /.card.mb-4-->
-      <!-- <div class="row">
-            <div class="col-sm-6 col-lg-4">
-              <div class="card mb-4" style="--cui-card-cap-bg: #3b5998">
-                <div class="card-header position-relative d-flex justify-content-center align-items-center">
-                  <svg class="icon icon-3xl text-white my-4">
-                    <use xlink:href="vendors/@coreui/icons/svg/brand.svg#cib-facebook-f"></use>
-                  </svg>
-                  <div class="chart-wrapper position-absolute top-0 start-0 w-100 h-100">
-                    <canvas id="social-box-chart-1" height="90"></canvas>
-                  </div>
-                </div>
-                <div class="card-body row text-center">
-                  <div class="col">
-                    <div class="fs-5 fw-semibold">89k</div>
-                    <div class="text-uppercase text-medium-emphasis small">friends</div>
-                  </div>
-                  <div class="vr"></div>
-                  <div class="col">
-                    <div class="fs-5 fw-semibold">459</div>
-                    <div class="text-uppercase text-medium-emphasis small">feeds</div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-      <!-- /.col-->
-      <!-- <div class="col-sm-6 col-lg-4">
-              <div class="card mb-4" style="--cui-card-cap-bg: #00aced">
-                <div class="card-header position-relative d-flex justify-content-center align-items-center">
-                  <svg class="icon icon-3xl text-white my-4">
-                    <use xlink:href="vendors/@coreui/icons/svg/brand.svg#cib-twitter"></use>
-                  </svg>
-                  <div class="chart-wrapper position-absolute top-0 start-0 w-100 h-100">
-                    <canvas id="social-box-chart-2" height="90"></canvas>
-                  </div>
-                </div>
-                <div class="card-body row text-center">
-                  <div class="col">
-                    <div class="fs-5 fw-semibold">973k</div>
-                    <div class="text-uppercase text-medium-emphasis small">followers</div>
-                  </div>
-                  <div class="vr"></div>
-                  <div class="col">
-                    <div class="fs-5 fw-semibold">1.792</div>
-                    <div class="text-uppercase text-medium-emphasis small">tweets</div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-      <!-- /.col-->
-      <!-- <div class="col-sm-6 col-lg-4">
-              <div class="card mb-4" style="--cui-card-cap-bg: #4875b4">
-                <div class="card-header position-relative d-flex justify-content-center align-items-center">
-                  <svg class="icon icon-3xl text-white my-4">
-                    <use xlink:href="vendors/@coreui/icons/svg/brand.svg#cib-linkedin"></use>
-                  </svg>
-                  <div class="chart-wrapper position-absolute top-0 start-0 w-100 h-100">
-                    <canvas id="social-box-chart-3" height="90"></canvas>
-                  </div>
-                </div>
-                <div class="card-body row text-center">
-                  <div class="col">
-                    <div class="fs-5 fw-semibold">500+</div>
-                    <div class="text-uppercase text-medium-emphasis small">contacts</div>
-                  </div>
-                  <div class="vr"></div>
-                  <div class="col">
-                    <div class="fs-5 fw-semibold">292</div>
-                    <div class="text-uppercase text-medium-emphasis small">feeds</div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-      <!-- /.col-->
+   
     </div>
     <!-- /.row-->
 
