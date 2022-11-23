@@ -11,7 +11,7 @@ router.get("/tempo-real/:idAquario", function (req, res) {
     medidaController.buscarMedidasEmTempoReal(req, res);
 })
 
-router.get("/ultimas/:idLeitura", function (req, res) {
+router.get("/ultimas2/:idAtm", function (req, res) {
     medidaController.buscarMedidaIdle(req, res);
 })
 

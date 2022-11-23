@@ -45,11 +45,11 @@ function buscarMedidaIdle(req, res) {
 
     const limite_linhas = 6;
 
-    var idLeitura = req.params.idLeitura;
+    var idAtm = req.params.idAtm;
 
     console.log(`Recuperando as ultimas ${limite_linhas} medidas`);
 
-    medidaModel.buscarMedidaIdle(idLeitura, limite_linhas).then(function (resultado) {
+    medidaModel.buscarMedidaIdle(idAtm, limite_linhas).then(function (resultado) {
         if (resultado.length > 0) {
             res.status(200).json(resultado);
         } else {

@@ -513,20 +513,20 @@
                       });
                   }
 
-                  function obterDadosGraficoCpu(idLeitura) {
+                  function obterDadosGraficoCpu(idAtm) {
                     // alterarTitulo(idAquario)
 
                     if (proximaAtualizacao != undefined) {
                       clearTimeout(proximaAtualizacao);
                     }
 
-                    fetch(`/medidas/ultimas/${idLeitura}`, { cache: 'no-store' }).then(function (response) {
+                    fetch(`/medidas/ultimas2/${idAtm}`, { cache: 'no-store' }).then(function (response) {
                       if (response.ok) {
                         response.json().then(function (resposta) {
                           console.log(`Dados recebidos: ${JSON.stringify(resposta)}`);
                           resposta.reverse();
 
-                          plotarGraficoCpu(resposta);
+                          plotarGrafico(resposta);
                         });
                       } else {
                         console.error('Nenhum dado encontrado ou erro na API');
@@ -539,7 +539,7 @@
 
                   
 
-                  function plotarGrafico(resposta, idAquario, idLeitura) {
+                  function plotarGrafico(resposta, idAquario, idAtm) {
                     console.log('iniciando plotagem do gráfico...');
 
                     var dados = {
@@ -595,15 +595,16 @@
                       labels: [],
                       datasets: [
                         {
-                          yAxisID: 'yAxisDisc',
-                          xAxisID: 'xAxisDisc',
-                          label: 'Tempo de uso CPU',
+                          yAxisID: 'yAxisCPU',
+                          xAxisID: 'xAxisCPU',
+                          label: 'Tempo de uso da CPU(min)',
                           borderColor: '#000814',
-                          backgroundColor: '#ffd166',
+                          backgroundColor: '#118ab2',
                           pointRadius: 6,
                           fill: true,
                           data: []
                         }
+                        
                       ]
                     };
 
@@ -611,15 +612,16 @@
                       labels: [],
                       datasets: [
                         {
-                          yAxisID: 'yAxisDisc',
-                          xAxisID: 'xAxisDisc',
-                          label: 'Tempo de Inatividade CPU',
+                          yAxisID: 'yAxisCPU',
+                          xAxisID: 'xAxisCPU',
+                          label: 'Tempo de inatividade da CPU(seg)',
                           borderColor: '#000814',
-                          backgroundColor: '#ffd166',
+                          backgroundColor: '#118ab2',
                           pointRadius: 6,
                           fill: true,
                           data: []
                         }
+                        
                       ]
                     };
 
@@ -627,15 +629,16 @@
                       labels: [],
                       datasets: [
                         {
-                          yAxisID: 'yAxisDisc',
-                          xAxisID: 'xAxisDisc',
-                          label: 'Tempo de I/O CPU',
+                          yAxisID: 'yAxisCPU',
+                          xAxisID: 'xAxisCPU',
+                          label: 'Tempo de I/O da CPU(%)',
                           borderColor: '#000814',
-                          backgroundColor: '#ffd166',
+                          backgroundColor: '#118ab2',
                           pointRadius: 6,
                           fill: true,
                           data: []
                         }
+                        
                       ]
                     };
 
@@ -647,13 +650,14 @@
                       dados2.datasets[0].data.push(registro.memoriaTotem)
                       dados3.labels.push(registro.momento_grafico)
                       dados3.datasets[0].data.push(registro.discoTotem)
-                      dadosUso.labels.push(registro.momento_grafico)
+                      
+                      dadosUso.labels.push(registro.momento)
                       dadosUso.datasets[0].data.push(registro.cpuUso)
-                      dadosIdle.labels.push(registro.momento_grafico)
+                      dadosIdle.labels.push(registro.momento)
                       dadosIdle.datasets[0].data.push(registro.cpuIdle)
-                      dadosIO.labels.push(registro.momento_grafico)
+                      dadosIO.labels.push(registro.momento)
                       dadosIO.datasets[0].data.push(registro.cpuIO)
-                      // dados.datasets[1].data.push(registro.memoriaTotem);
+                      
                     }
 
                     
@@ -845,12 +849,12 @@
                       }
                     })
 
-                    setTimeout(() => atualizarGrafico(idAquario, idLeitura, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO), 2000);
+                    setTimeout(() => atualizarGrafico(idAquario, idAtm, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO), 2000);
                   }
 
               
 
-                  function atualizarGrafico(idAquario, idLeitura, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO) {
+                  function atualizarGrafico(idAquario, idAtm, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO) {
 
                     fetch(`/medidas/tempo-real/${idAquario}`, { cache: 'no-store' }).then(function (response) {
                       if (response.ok) {
@@ -877,20 +881,20 @@
                           dados3.datasets[0].data.shift();  // apagar o primeiro de temperatura
                           dados3.datasets[0].data.push(novoRegistro[0].disco); 
 
-                          dadosUso.labels.shift();  // apagar o primeiro de temperatura
-                          dadosUso.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
-                          dadosUso.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          dadosUso.datasets[0].data.push(novoRegistro[0].uso); 
+                          // dadosUso.labels.shift();  // apagar o primeiro de temperatura
+                          // dadosUso.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
+                          // dadosUso.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                          // dadosUso.datasets[0].data.push(novoRegistro[0].uso); 
 
-                          dadosIdle.labels.shift();  // apagar o primeiro de temperatura
-                          dadosIdle.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
-                          dadosIdle.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          dadosIdle.datasets[0].data.push(novoRegistro[0].inativo); 
+                          // dadosIdle.labels.shift();  // apagar o primeiro de temperatura
+                          // dadosIdle.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
+                          // dadosIdle.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                          // dadosIdle.datasets[0].data.push(novoRegistro[0].inativo); 
 
-                          dadosIO.labels.shift();  // apagar o primeiro de temperatura
-                          dadosIO.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
-                          dadosIO.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          dadosIO.datasets[0].data.push(novoRegistro[0].entrada); 
+                          // dadosIO.labels.shift();  // apagar o primeiro de temperatura
+                          // dadosIO.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
+                          // dadosIO.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                          // dadosIO.datasets[0].data.push(novoRegistro[0].entrada); 
 
                           window.grafico_linha.update();
                           window.grafico_linha2.update();
@@ -903,7 +907,7 @@
 
 
                           // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
-                          proximaAtualizacao = setTimeout(() => atualizarGrafico(idAquario, idLeitura, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO), 2000);
+                          proximaAtualizacao = setTimeout(() => atualizarGrafico(idAquario, idAtm, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO), 2000);
                         }
                         );
                       } else {
@@ -912,48 +916,52 @@
                       }
                     }
                     );
-                    fetch(`/medidas/ultimas/${idLeitura}`, { cache: 'no-store' }).then(function (response) {
+                    fetch(`/medidas/ultimas2/${idAtm}`, { cache: 'no-store' }).then(function (response) {
                       if (response.ok) {
                         response.json().then(function (novoRegistro) {
 
                           console.log(`Dados recebidos: ${JSON.stringify(novoRegistro)}`);
-                          console.log(`Dados atuais do gráfico: ${dados}`);
-                          console.log(`Dados atuais do gráfico: ${dados2}`);
+                          console.log(`Dados atuais do gráfico: ${dadosUso}`);
+                          console.log(`Dados atuais do gráfico: ${dadosIdle}`);
+                          console.log(`Dados atuais do gráfico: ${dadosIO}`);
                           
-                          dados.labels.shift(); // apagar o primeiro
-                          dados.labels.push(novoRegistro[0].momento_grafico); // incluir um novo momento
-                          dados.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          dados.datasets[0].data.push(novoRegistro[0].cpu); 
+                          // dados.labels.shift(); // apagar o primeiro
+                          // dados.labels.push(novoRegistro[0].momento_grafico); // incluir um novo momento
+                          // dados.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                          // dados.datasets[0].data.push(novoRegistro[0].cpu); 
                         
 
-                          dados2.labels.shift();  // apagar o primeiro de temperatura
-                          dados2.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
-                          dados2.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          dados2.datasets[0].data.push(novoRegistro[0].memoria); 
+                          // dados2.labels.shift();  // apagar o primeiro de temperatura
+                          // dados2.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
+                          // dados2.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                          // dados2.datasets[0].data.push(novoRegistro[0].memoria); 
 
-                          dados3.labels.shift();  // apagar o primeiro de temperatura
-                          dados3.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
-                          dados3.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          dados3.datasets[0].data.push(novoRegistro[0].disco); 
+                          // dados3.labels.shift();  // apagar o primeiro de temperatura
+                          // dados3.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
+                          // dados3.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                          // dados3.datasets[0].data.push(novoRegistro[0].disco); 
+
+
+                          console.log("NOVO REGISTRO",novoRegistro);
 
                           dadosUso.labels.shift();  // apagar o primeiro de temperatura
-                          dadosUso.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
+                          dadosUso.labels.push(novoRegistro[0].momento); // incluir uma nova medida de temperatura
                           dadosUso.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          dadosUso.datasets[0].data.push(novoRegistro[0].cpuUso); 
+                          dadosUso.datasets[0].data.push(novoRegistro[0].uso); 
 
                           dadosIdle.labels.shift();  // apagar o primeiro de temperatura
-                          dadosIdle.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
+                          dadosIdle.labels.push(novoRegistro[0].momento); // incluir uma nova medida de temperatura
                           dadosIdle.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          dadosIdle.datasets[0].data.push(novoRegistro[0].cpuIdle); 
+                          dadosIdle.datasets[0].data.push(novoRegistro[0].inativo); 
 
                           dadosIO.labels.shift();  // apagar o primeiro de temperatura
-                          dadosIO.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
+                          dadosIO.labels.push(novoRegistro[0].momento); // incluir uma nova medida de temperatura
                           dadosIO.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          dadosIO.datasets[0].data.push(novoRegistro[0].cpuIO); 
+                          dadosIO.datasets[0].data.push(novoRegistro[0].entrada); 
 
-                          window.grafico_linha.update();
-                          window.grafico_linha2.update();
-                          window.grafico_linha3.update();
+                          // window.grafico_linha.update();
+                          // window.grafico_linha2.update();
+                          // window.grafico_linha3.update();
                           window.grafico_linhaUso.update();
                           window.grafico_linhaIDLE.update();
                           window.grafico_linhaIO.update();
@@ -961,7 +969,7 @@
 
 
                           // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
-                          proximaAtualizacao = setTimeout(() => atualizarGrafico(idAquario, idLeitura, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO), 2000);
+                          // proximaAtualizacao = setTimeout(() => atualizarGrafico(idAtm, dadosUso, dadosIdle, dadosIO), 2000);
                         }
                         );
                       } else {

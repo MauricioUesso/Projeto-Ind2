@@ -54,13 +54,16 @@ function buscarMedidasEmTempoReal(idAquario) {
     return database.executar(instrucaoSql);
 }
 
-function buscarMedidaIdle(idLeitura, limite_linhas) {
+function buscarMedidaIdle(idAtm, limite_linhas) {
 
     instrucaoSql = ''
 
     if (process.env.AMBIENTE_PROCESSO == "producao") {
         instrucaoSql = `select top ${limite_linhas} cpuUso as uso, cpuIdle as inativo, cpuIO as entrada, dataHora,
-        CONVERT(varchar, dataHora, 108) as momento from MAUind where fkAtm = ${idLeitura}
+        CONVERT(varchar, dataHora, 108) as momento,
+        fkAtm 
+        from MAUind, Atm
+        where fkAtm = idAtm
         order by idLeitura desc`;
     
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
