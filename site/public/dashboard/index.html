@@ -597,9 +597,9 @@
                         {
                           yAxisID: 'yAxisCPU',
                           xAxisID: 'xAxisCPU',
-                          label: 'Tempo de uso da CPU(min)',
+                          label: 'Tempo de atividade da CPU(min)',
                           borderColor: '#000814',
-                          backgroundColor: '#118ab2',
+                          backgroundColor: '#A020F0',
                           pointRadius: 6,
                           fill: true,
                           data: []
@@ -616,7 +616,7 @@
                           xAxisID: 'xAxisCPU',
                           label: 'Tempo de inatividade da CPU(seg)',
                           borderColor: '#000814',
-                          backgroundColor: '#118ab2',
+                          backgroundColor: '#ADFF2F',
                           pointRadius: 6,
                           fill: true,
                           data: []
@@ -631,9 +631,9 @@
                         {
                           yAxisID: 'yAxisCPU',
                           xAxisID: 'xAxisCPU',
-                          label: 'Tempo de I/O da CPU(%)',
+                          label: 'Tempo de I/O da CPU(seg)',
                           borderColor: '#000814',
-                          backgroundColor: '#118ab2',
+                          backgroundColor: '#00BFFF',
                           pointRadius: 6,
                           fill: true,
                           data: []
@@ -881,21 +881,6 @@
                           dados3.datasets[0].data.shift();  // apagar o primeiro de temperatura
                           dados3.datasets[0].data.push(novoRegistro[0].disco); 
 
-                          // dadosUso.labels.shift();  // apagar o primeiro de temperatura
-                          // dadosUso.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
-                          // dadosUso.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          // dadosUso.datasets[0].data.push(novoRegistro[0].uso); 
-
-                          // dadosIdle.labels.shift();  // apagar o primeiro de temperatura
-                          // dadosIdle.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
-                          // dadosIdle.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          // dadosIdle.datasets[0].data.push(novoRegistro[0].inativo); 
-
-                          // dadosIO.labels.shift();  // apagar o primeiro de temperatura
-                          // dadosIO.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
-                          // dadosIO.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          // dadosIO.datasets[0].data.push(novoRegistro[0].entrada); 
-
                           window.grafico_linha.update();
                           window.grafico_linha2.update();
                           window.grafico_linha3.update();
@@ -925,22 +910,6 @@
                           console.log(`Dados atuais do gráfico: ${dadosIdle}`);
                           console.log(`Dados atuais do gráfico: ${dadosIO}`);
                           
-                          // dados.labels.shift(); // apagar o primeiro
-                          // dados.labels.push(novoRegistro[0].momento_grafico); // incluir um novo momento
-                          // dados.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          // dados.datasets[0].data.push(novoRegistro[0].cpu); 
-                        
-
-                          // dados2.labels.shift();  // apagar o primeiro de temperatura
-                          // dados2.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
-                          // dados2.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          // dados2.datasets[0].data.push(novoRegistro[0].memoria); 
-
-                          // dados3.labels.shift();  // apagar o primeiro de temperatura
-                          // dados3.labels.push(novoRegistro[0].momento_grafico); // incluir uma nova medida de temperatura
-                          // dados3.datasets[0].data.shift();  // apagar o primeiro de temperatura
-                          // dados3.datasets[0].data.push(novoRegistro[0].disco); 
-
 
                           console.log("NOVO REGISTRO",novoRegistro);
 
@@ -959,17 +928,11 @@
                           dadosIO.datasets[0].data.shift();  // apagar o primeiro de temperatura
                           dadosIO.datasets[0].data.push(novoRegistro[0].entrada); 
 
-                          // window.grafico_linha.update();
-                          // window.grafico_linha2.update();
-                          // window.grafico_linha3.update();
                           window.grafico_linhaUso.update();
                           window.grafico_linhaIDLE.update();
                           window.grafico_linhaIO.update();
 
 
-
-                          // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
-                          // proximaAtualizacao = setTimeout(() => atualizarGrafico(idAtm, dadosUso, dadosIdle, dadosIO), 2000);
                         }
                         );
                       } else {
@@ -1003,35 +966,6 @@
 
                 <!-- Line Chart -->
                 <canvas id="canvas_grafico2"></canvas>
-                <!-- <script>
-                  document.addEventListener("DOMContentLoaded", () => {
-                    new Chart(document.querySelector('#lineChart2'), {
-                      type: 'line',
-                      data: {
-                        labels: ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
-                        datasets: [{
-                          label: 'Uso da RAM (%)',
-                          data: [65, 59, 80, 81, 56, 90, 60],
-                          fill: false,
-                          borderColor: 'grey',
-                          backgroundColor: ['yellow', 'green', 'orange', 'orange', 'green', 'red', 'yellow'],
-                          pointRadius: 8,
-                          tension: 0.1
-                        }]
-                      },
-                      options: {
-                        scales: {
-                          y: {
-                            beginAtZero: true
-                          }
-                        }
-                      }
-                    });
-                  });
-                </script> -->
-
-
-                <!-- End Line CHart -->
 
               </div>
             </div>
@@ -1044,30 +978,6 @@
 
                 <!-- Pie Chart -->
                 <canvas id="canvas_grafico3"></canvas>
-                <!-- <script>
-                  document.addEventListener("DOMContentLoaded", () => {
-                    new Chart(document.querySelector('#pieChart'), {
-                      type: 'pie',
-                      data: {
-                        labels: [
-                          'Em uso (%)',
-                          'Disponível (%)',
-                        ],
-                        datasets: [{
-                          label: 'My First Dataset',
-                          data: [70, 30],
-                          backgroundColor: [
-                            'dimgrey',
-                            'MediumSpringGreen',
-                          ],
-                          borderColor: 'darkgrey',
-                          hoverOffset: 4
-                        }]
-                      }
-                    });
-                  });
-                </script> -->
-                <!-- End Pie CHart -->
 
               </div>
             </div>
@@ -1122,35 +1032,6 @@
 
                 <!-- Line Chart -->
                 <canvas id="canvas_graficoUso"></canvas>
-                <!-- <script>
-                  document.addEventListener("DOMContentLoaded", () => {
-                    new Chart(document.querySelector('#lineChart2'), {
-                      type: 'line',
-                      data: {
-                        labels: ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
-                        datasets: [{
-                          label: 'Uso da RAM (%)',
-                          data: [65, 59, 80, 81, 56, 90, 60],
-                          fill: false,
-                          borderColor: 'grey',
-                          backgroundColor: ['yellow', 'green', 'orange', 'orange', 'green', 'red', 'yellow'],
-                          pointRadius: 8,
-                          tension: 0.1
-                        }]
-                      },
-                      options: {
-                        scales: {
-                          y: {
-                            beginAtZero: true
-                          }
-                        }
-                      }
-                    });
-                  });
-                </script> -->
-
-
-                <!-- End Line CHart -->
 
               </div>
             </div>
@@ -1163,35 +1044,6 @@
 
                 <!-- Line Chart -->
                 <canvas id="canvas_graficoIDLE"></canvas>
-                <!-- <script>
-                  document.addEventListener("DOMContentLoaded", () => {
-                    new Chart(document.querySelector('#lineChart2'), {
-                      type: 'line',
-                      data: {
-                        labels: ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
-                        datasets: [{
-                          label: 'Uso da RAM (%)',
-                          data: [65, 59, 80, 81, 56, 90, 60],
-                          fill: false,
-                          borderColor: 'grey',
-                          backgroundColor: ['yellow', 'green', 'orange', 'orange', 'green', 'red', 'yellow'],
-                          pointRadius: 8,
-                          tension: 0.1
-                        }]
-                      },
-                      options: {
-                        scales: {
-                          y: {
-                            beginAtZero: true
-                          }
-                        }
-                      }
-                    });
-                  });
-                </script> -->
-
-
-                <!-- End Line CHart -->
 
               </div>
             </div>
@@ -1204,35 +1056,6 @@
 
                 <!-- Line Chart -->
                 <canvas id="canvas_graficoIO"></canvas>
-                <!-- <script>
-                  document.addEventListener("DOMContentLoaded", () => {
-                    new Chart(document.querySelector('#lineChart2'), {
-                      type: 'line',
-                      data: {
-                        labels: ['14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'],
-                        datasets: [{
-                          label: 'Uso da RAM (%)',
-                          data: [65, 59, 80, 81, 56, 90, 60],
-                          fill: false,
-                          borderColor: 'grey',
-                          backgroundColor: ['yellow', 'green', 'orange', 'orange', 'green', 'red', 'yellow'],
-                          pointRadius: 8,
-                          tension: 0.1
-                        }]
-                      },
-                      options: {
-                        scales: {
-                          y: {
-                            beginAtZero: true
-                          }
-                        }
-                      }
-                    });
-                  });
-                </script> -->
-
-
-                <!-- End Line CHart -->
 
               </div>
             </div>
