@@ -5,9 +5,17 @@ function buscarUltimasMedidas(idAquario, limite_linhas) {
     instrucaoSql = ''
 
     if (process.env.AMBIENTE_PROCESSO == "producao") {
-        instrucaoSql = `select top ${limite_linhas} cpuTotem as cpu, memoriaTotem as memoria, discoTotem as disco, dataHora,
-        CONVERT(varchar, dataHora, 108) as momento_grafico from Leitura where fkAtm = ${idAquario}
-        order by idLeitura desc`;
+        instrucaoSql = `select top ${limite_linhas}
+        cpuTotem as cpu, 
+        memoriaTotem as memoria, 
+        discoTotem as disco,
+        memoriaUsada,
+        dataHora,
+        CONVERT(varchar, dataHora, 108) as momento_grafico
+        from Leitura 
+        where fkAtm = ${idAquario}
+        order by idLeitura desc
+        `;
         
     
     } else if (process.env.AMBIENTE_PROCESSO == "desenvolvimento") {
