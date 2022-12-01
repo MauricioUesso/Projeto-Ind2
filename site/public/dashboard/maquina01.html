@@ -480,27 +480,28 @@
                 <script>
 
                   let proximaAtualizacao;
-
+                  
                   window.onload = obterDadosGrafico(1);
-                  window.onload = obterDadosGraficoCpu(1)
+                  window.onload = obterDadosGraficoCpu(1);
 
 
                   // b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
 
                   // verificar_autenticacao();
 
-                  function obterDadosGrafico(idAquario) {
+                  function obterDadosGrafico(id) {
                     // alterarTitulo(idAquario)
-                    
+                    const fkAtm = 1
                     if (proximaAtualizacao != undefined) {
                       clearTimeout(proximaAtualizacao);
                     }
 
-                    fetch(`/medidas/ultimas/${idAquario}`, { cache: 'no-store' }).then(function (response) {
+                    fetch(`/medidas/atm/${fkAtm}`, { cache: 'no-store' }).then(function (response) {
                       if (response.ok) {
                         response.json().then(function (resposta) {
                           console.log(`Dados recebidos: ${JSON.stringify(resposta)}`);
                           resposta.reverse();
+                          console.log(fkAtm)
 
                           plotarGrafico(resposta);
                         });
@@ -515,7 +516,7 @@
 
                   function obterDadosGraficoCpu(idAtm) {
                     // alterarTitulo(idAquario)
-                    
+                    const fkAtm = 1
                     if (proximaAtualizacao != undefined) {
                       clearTimeout(proximaAtualizacao);
                     }
@@ -539,9 +540,9 @@
 
                   
 
-                  function plotarGrafico(resposta, idAquario, idAtm) {
+                  function plotarGrafico(resposta, id, idAtm) {
                     console.log('iniciando plotagem do gráfico...');
-                    
+                    const fkAtm = 1
                     var dados = {
                       labels: [],
                       datasets: [
@@ -849,14 +850,14 @@
                       }
                     })
 
-                    setTimeout(() => atualizarGrafico(idAquario, idAtm, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO), 2000);
+                    setTimeout(() => atualizarGrafico(fkAtm, idAtm, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO), 2000);
                   }
 
               
 
-                  function atualizarGrafico(idAquario, idAtm, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO) {
+                  function atualizarGrafico(fkAtm, idAtm, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO) {
 
-                    fetch(`/medidas/tempo-real/${idAquario}`, { cache: 'no-store' }).then(function (response) {
+                    fetch(`/medidas/tempo-real-atm/${fkAtm}`, { cache: 'no-store' }).then(function (response) {
                       if (response.ok) {
                         response.json().then(function (novoRegistro) {
 
@@ -892,7 +893,7 @@
 
 
                           // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
-                          proximaAtualizacao = setTimeout(() => atualizarGrafico(idAquario, idAtm, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO), 2000);
+                          proximaAtualizacao = setTimeout(() => atualizarGrafico(fkAtm, idAtm, dados, dados2, dados3, dadosUso, dadosIdle, dadosIO), 2000);
                         }
                         );
                       } else {
